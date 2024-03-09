@@ -1,7 +1,7 @@
 import React from 'react'
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
 import { createServer } from '@/utils/supabase/server';
+
 
 
 
@@ -15,6 +15,7 @@ export default async function layout({children}:{children:React.ReactNode}) {
   return (
     <div>
         {children}
+        
     </div>
   )
 }

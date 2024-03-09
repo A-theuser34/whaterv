@@ -1,7 +1,18 @@
-import React from 'react'
+import Loading from '@/app/loading'
+import React, { Suspense } from 'react'
+import RockRoute from './rockRoute'
 
-export default function page() {
+interface PageProps {
+  params:{desc:string}
+}
+
+export default function page({params:{desc}}:PageProps) {
   return (
-    <div>page</div>
+    <div>
+      <Suspense fallback={<Loading/>}>
+      <RockRoute desc={desc}/>
+      </Suspense>
+
+    </div>
   )
 }
