@@ -8,7 +8,7 @@ export default function ButtonForm() {
     return (
         <button 
           type='submit' 
-          className="transition duration-500 transform hover:bg-slate-600 bg-slate-400 text-black p-2 rounded-xl"
+          className="w-full flex justify-center py-3 px-6 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
           aria-disabled={pending}
         >
           {pending ? 'Loading...' : 'Submit'}

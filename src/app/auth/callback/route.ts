@@ -1,17 +1,14 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import { type EmailOtpType } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import { type CookieOptions, createServerClient } from '@supabase/ssr'
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url)
-  const token_hash = searchParams.get('token_hash')
-  const type = searchParams.get('type') as EmailOtpType | null
+export async function GET(request: Request) {
+  const { searchParams, origin } = new URL(request.url)
+  const code = searchParams.get('code')
+  // if "next" is in param, use it as the redirect URL
   const next = searchParams.get('next') ?? '/'
-  const redirectTo = request.nextUrl.clone()
-  redirectTo.pathname = next
 
-  if (token_hash && type) {
+  if (code) {
     const cookieStore = cookies()
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -30,17 +27,12 @@ export async function GET(request: NextRequest) {
         },
       }
     )
-
-    const { error } = await supabase.auth.verifyOtp({
-      type,
-      token_hash,
-    })
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      return NextResponse.redirect(redirectTo)
+      return NextResponse.redirect(`${origin}${next}`)
     }
   }
 
-  // return the user to an error page with some instructions
-  redirectTo.pathname = '/auth/auth-code-error'
-  return NextResponse.redirect(redirectTo)
+  // return the user to an error page with instructions
+  return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }

@@ -23,7 +23,7 @@ export default function SingOut() {
 
   return (
     <div className=" font-bold text-black">
-      <button onClick={logoutButton}>Logout</button>
+      <button className="ml-4" onClick={logoutButton}>Logout</button>
       {error}
       </div>
   )

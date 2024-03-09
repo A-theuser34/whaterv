@@ -1,6 +1,6 @@
 import { createServer } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-import { z } from "zod";
+import { ZodNumber, z } from "zod";
 
 const PasswordStrengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -26,22 +26,16 @@ export const LoginSchema = z.object({
 
 export type Login = z.infer<typeof LoginSchema>
 
-export const usernameSchema = z.string().min(4,'username has to be at least 4 charcaters')
-.max(8,'username must be 8 charcters or less')
-.regex(/^[a-zA-Z0-9]+$/, 'Username can only contain alphanumeric characters')
-.refine(async (username)=>{
-  const cookiesShop = cookies()
-  const supabase = await createServer(cookiesShop)
-  const { data } = await supabase
-      .from('profiles')
-      .select('display_name')
-      .eq('display_name', username)
-      .single();
-      return !data;
-},'Username is already taken');
+export const UserProfileSchema = z.object({
+  username: z.string().min(4, 'Username must be at least  4 characters').max(10, 'Username must be less than or equal to  10 characters'),
+  image: z.any().refine(file => {
+    // Assuming `file` is an instance of File or similar
+    return file && file.byteLength <=  400 *  1024; //  400 KB
+  }, 'File size must be less than or equal to  400 KB'),
+});
 
+export type Users = z.infer<typeof UserProfileSchema>
 
-export type Users = z.infer<typeof usernameSchema>
   export interface RockClimbing {
     id:number,
     place:string,
@@ -49,4 +43,45 @@ export type Users = z.infer<typeof usernameSchema>
     approved:boolean,
     lat:number,
     long:number,
+    description:string,
+}
+export interface WeatherData {
+  
+  weather: {
+    main: string;
+    description: string;
+  }[];
+  main: {
+    temp: number;
+    feels_like: number;
+    temp_min: number;
+    temp_max: number;
+  };
+  visibility: number;
+  wind: {
+    speed: number;
+  };
+  clouds: {
+    all: number;
+  };
+}
+export interface User {
+  username: string;
+  avatar_url: string;
+}
+export interface Comments {
+  id:number
+  user_id:number,
+  rock_id:number,
+  content:string,
+  users?: User;
+
+}
+export interface userRoutes {
+  id:number,
+  user_id:string,
+  rock_id:number,
+  rocks:{
+    place:string
+  }
 }
