@@ -6,7 +6,7 @@ import {LoginUsers} from "@/mig/userAction";
 import ButtonForm from "@/app/(forms)/Contribute/ButtonForm";
 import Oauth from "../SignUp/oauth";
 
-export default function page() {
+export default function Page() {
   const router = useRouter()
 
   const [error , setError] = useState('')
