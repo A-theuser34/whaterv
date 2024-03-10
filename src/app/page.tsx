@@ -57,19 +57,19 @@ export default function Home() {
   
   const onLoad = React.useCallback(function callback(mapInstance: google.maps.Map) {
     mapInstance.setOptions({
-      restriction: {
-        latLngBounds: usaBounds,
-        strictBounds: true,
-      },
+       restriction: {
+         latLngBounds: usaBounds,
+         strictBounds: true,
+       },
     });
     const bounds = new window.google.maps.LatLngBounds(center);
     mapInstance.fitBounds(bounds);
-  }, []);
-
- const onUnmount = React.useCallback(function callback(mapInstance: google.maps.Map | null) {
-  setMap(null);
-}, []);
-
+   }, [center, usaBounds]); // Include center and usaBounds in the dependency array
+   
+   const onUnmount = React.useCallback(function callback(mapInstance: google.maps.Map | null) {
+    setMap(null);
+   }, []); // No dependencies for onUnmount
+   
 
 
 
@@ -81,22 +81,21 @@ return isLoaded ? (
     onLoad={onLoad}
     onUnmount={onUnmount}
   >
-    {data?.map((rock,index)=>{
-    return(
-      <div>
-          <Marker onClick={()=> handleMarkerClicks(rock)} key={index} position={{lat:rock.lat,lng:rock.long}} />
+    {data?.map((rock, index) => (
+ <Marker
+    onClick={() => handleMarkerClicks(rock)}
+    key={index} // This is correct
+    position={{ lat: rock.lat, lng: rock.long }}
+ />
+))}
 
-      </div>
-    )
-      
-} )}
 
  {selectedPlace && (
         <InfoWindow
           position={{ lat: selectedPlace.lat, lng: selectedPlace.long }}
           onCloseClick={() => setSelectedPlace(null)}
         >
-          <div>
+          <div >
             <h2>{selectedPlace.grade}</h2>
             <p>{selectedPlace.place}</p>
             <Link href={`/route/${selectedPlace.id}`}>

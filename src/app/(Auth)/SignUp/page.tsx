@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {signUpUser} from "@/mig/userAction";
 import ButtonForm from "@/app/(forms)/Contribute/ButtonForm";
 
-export default function page() {
+export default function Page() {
   const router = useRouter()
   const [error , setError] = useState('')
   async function clientUser(form:FormData){
